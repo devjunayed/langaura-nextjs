@@ -12,9 +12,27 @@ import {
 } from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
 import { X } from "lucide-react";
+import { useState } from "react";
 
 const CreateCourse = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const [courseName, setCourseName] = useState("");
+  const [courseLang, setCourseLang] = useState<
+    | {
+        key: string;
+        label: string;
+      }
+    | undefined
+  >({
+    key: "",
+    label: "",
+  });
+
+  const onSubmit = () => {
+    // console.log({
+    //   coursN
+    // });
+  };
 
   return (
     <>
@@ -31,8 +49,14 @@ const CreateCourse = () => {
         size="2xl"
         isOpen={isOpen}
         closeButton={
-          <Button className="w-0 p-0" onPress={onClose}>
-            <X />
+          <Button
+            isIconOnly
+            size="sm"
+            color="primary"
+            className="group "
+            onPress={onClose}
+          >
+            <X className="size-4 text-white group-hover:text-gray-900  " />
           </Button>
         }
       >
@@ -48,6 +72,13 @@ const CreateCourse = () => {
                   label="Enter course name"
                 />
                 <Select
+                  onChange={(event) => {
+                    setCourseLang(
+                      majorLanguages?.find(
+                        (lang) => lang.key === event.target.value
+                      )
+                    );
+                  }}
                   labelPlacement="outside"
                   placeholder="English"
                   className="cursor-pointer"
