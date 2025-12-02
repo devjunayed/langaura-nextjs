@@ -3,11 +3,14 @@ name: CI CD PIPELINE
 on: 
   push: 
     branches: [main]
+  pull_request:
+    branches: [main]
 
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -19,6 +22,16 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Setup environment variables
+        run: | 
+          echo "DATABASE_URL=${{secrets.DATABASE_URL}}" >> .env
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run Prisma Migrations
+        run: npx prisma migrate deploy
 
       - name: Deploy to Vercel
         run: npx vercel deploy --yes --prod --token=$VERCEL_TOKEN

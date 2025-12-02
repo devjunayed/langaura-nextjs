@@ -29,18 +29,17 @@ const CreateCourse = () => {
   });
 
   const onSubmit = () => {
-    // console.log({
-    //   coursN
-    // });
+   
+    console.log({courseName, courseLang})
   };
 
   return (
     <>
       <div
         onClick={onOpen}
-        className="bg-white cursor-pointer flex gap-2 p-2  rounded-md"
+        className="bg-white cursor-pointer w-50 h-50 flex gap-2 p-2  rounded-md"
       >
-        <div className="w-50 h-50 shadow-md flex items-center justify-center border  border-dashed border-gray-300 text-gray-300 text-4xl">
+        <div className=" w-full h-full shadow-md flex items-center justify-center border  border-dashed border-gray-300 text-gray-300 text-4xl">
           +
         </div>
       </div>
@@ -70,6 +69,7 @@ const CreateCourse = () => {
                   placeholder="e.g English grammer"
                   labelPlacement="outside"
                   label="Enter course name"
+                  onChange={( e) => setCourseName(e.target.value)}
                 />
                 <Select
                   onChange={(event) => {
@@ -94,7 +94,7 @@ const CreateCourse = () => {
               <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onPress={onClose}>
+              <Button color="primary" onPress={onSubmit}>
                 Submit
               </Button>
             </ModalFooter>

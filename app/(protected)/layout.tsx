@@ -1,8 +1,10 @@
 import { Navbar } from "@/components/navbar";
+import { stackServerApp } from "@/stack/server";
 import { Link } from "@heroui/link";
 import React, { ReactNode } from "react";
 
-const UnprotectedLayout = ({ children }: { children: ReactNode }) => {
+const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
+  await stackServerApp.getUser({ or: "redirect" });
   return (
     <div className="relative flex flex-col h-screen">
       <Navbar />
@@ -24,4 +26,4 @@ const UnprotectedLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default UnprotectedLayout;
+export default ProtectedLayout;
