@@ -8,7 +8,7 @@ export const Counter = () => {
 
   return (
     <Button radius="full" onPress={() => setCount(count + 1)}>
-      Count is {count}
+      Count is {count} times
     </Button>
   );
 };
