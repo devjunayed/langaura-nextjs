@@ -25,7 +25,7 @@ import {
   SearchIcon,
   Logo,
 } from "@/components/icons";
-import { UserButton, useUser } from "@stackframe/stack";
+import UserButton from "./user-button";
 
 export const Navbar = () => {
   const searchInput = (
@@ -82,7 +82,7 @@ export const Navbar = () => {
       >
        <NavbarItem className="space-x-2 flex gap-4">
           <ThemeSwitch />
-          <UserButton  />
+          <UserButton />
         </NavbarItem>
        
        

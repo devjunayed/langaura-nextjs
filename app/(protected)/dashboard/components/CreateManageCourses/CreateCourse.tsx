@@ -1,5 +1,7 @@
 "use client";
+import { createCourse } from "@/actions/user.action";
 import { majorLanguages } from "@/constants/majorLanguages";
+import { stackClientApp } from "@/stack/client";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import {
@@ -15,7 +17,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 
 const CreateCourse = () => {
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [courseName, setCourseName] = useState("");
   const [courseLang, setCourseLang] = useState<
     | {
@@ -28,9 +30,14 @@ const CreateCourse = () => {
     label: "",
   });
 
-  const onSubmit = () => {
-   
-    console.log({courseName, courseLang})
+  const onSubmit = async () => {
+    if (courseName && courseLang) {
+      createCourse({
+        name: courseName,
+        key: courseLang?.key,
+        label: courseLang?.label,
+      });
+    }
   };
 
   return (
@@ -69,7 +76,7 @@ const CreateCourse = () => {
                   placeholder="e.g English grammer"
                   labelPlacement="outside"
                   label="Enter course name"
-                  onChange={( e) => setCourseName(e.target.value)}
+                  onChange={(e) => setCourseName(e.target.value)}
                 />
                 <Select
                   onChange={(event) => {

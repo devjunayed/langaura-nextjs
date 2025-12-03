@@ -1,5 +1,4 @@
-import { ChevronRight } from "lucide-react";
-import DashboardTitle from "./components/DashboardTitle";
+
 import EnrolledCourses from "./components/EnrolledCourses/EnrolledCourses";
 import CreateManageCourses from "./components/CreateManageCourses/CreateManageCourses";
 import CompletedCourses from "./components/CompletedCourses/CompletedCourses";
