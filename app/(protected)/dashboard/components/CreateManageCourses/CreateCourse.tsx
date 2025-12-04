@@ -1,5 +1,5 @@
 "use client";
-import { createCourse } from "@/actions/user.action";
+import { createCourse } from "@/actions/course.action";
 import { majorLanguages } from "@/constants/majorLanguages";
 import { stackClientApp } from "@/stack/client";
 import { Button } from "@heroui/button";

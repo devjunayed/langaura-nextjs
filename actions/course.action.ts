@@ -5,14 +5,14 @@ import { stackServerApp } from "@/stack/server";
 
 export const createCourse = async (data: any) => {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) throw new Error("Not authenticated");
+    const session = await stackServerApp.getUser();
+    if (!session) throw new Error("Not authenticated");
     const res = await prisma.course.create({
       data: {
         name: data.name,
         key: data.key,
         label: data.label,
-        authorId: user.id,
+        authorId: session.id,
       },
     });
     return res;
