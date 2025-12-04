@@ -14,8 +14,10 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
+  id      String @id @default(uuid())
+  stackId String @unique
+  name    String
+
   email     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

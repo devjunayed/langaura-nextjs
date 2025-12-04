@@ -1,10 +1,12 @@
 import { Navbar } from "@/components/navbar";
+import { syncUser } from "@/lib/syncUser";
 import { stackServerApp } from "@/stack/server";
 import { Link } from "@heroui/link";
 import React, { ReactNode } from "react";
 
 const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
   await stackServerApp.getUser({ or: "redirect" });
+  await syncUser();
   return (
     <div className="relative flex flex-col h-screen">
       <Navbar />

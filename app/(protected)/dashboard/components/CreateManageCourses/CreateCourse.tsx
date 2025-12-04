@@ -32,11 +32,13 @@ const CreateCourse = () => {
 
   const onSubmit = async () => {
     if (courseName && courseLang) {
-      createCourse({
+     const res = await createCourse({
         name: courseName,
         key: courseLang?.key,
         label: courseLang?.label,
       });
+
+      console.log({res})
     }
   };
 

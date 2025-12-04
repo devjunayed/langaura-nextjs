@@ -6,7 +6,6 @@ import { stackServerApp } from "@/stack/server";
 export const createCourse = async (data: any) => {
   try {
     const user = await stackServerApp.getUser();
-    console.log(user)
     if (!user) throw new Error("Not authenticated");
     const res = await prisma.course.create({
       data: {
@@ -16,8 +15,10 @@ export const createCourse = async (data: any) => {
         authorId: user.id,
       },
     });
-    console.log(res);
+    return res;
   } catch (error) {
+    console.log("====================================");
     console.log(error);
+    console.log("====================================");
   }
 };
