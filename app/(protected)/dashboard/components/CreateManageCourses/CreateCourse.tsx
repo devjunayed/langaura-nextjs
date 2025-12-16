@@ -1,7 +1,6 @@
 "use client";
 import { createCourse } from "@/actions/course.action";
 import { majorLanguages } from "@/constants/majorLanguages";
-import { stackClientApp } from "@/stack/client";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import {
@@ -32,13 +31,13 @@ const CreateCourse = () => {
 
   const onSubmit = async () => {
     if (courseName && courseLang) {
-     const res = await createCourse({
+      const res = await createCourse({
         name: courseName,
         key: courseLang?.key,
         label: courseLang?.label,
       });
 
-      console.log({res})
+      console.log({ res });
     }
   };
 
@@ -73,6 +72,8 @@ const CreateCourse = () => {
             <ModalHeader>Create a course</ModalHeader>
             <ModalBody>
               <>
+                <label htmlFor="image" className="text-5xl text-gray-400">+</label>
+                <Input id="image" type="image" className="hidden" />
                 <Input
                   className="cursor-pointer"
                   placeholder="e.g English grammer"

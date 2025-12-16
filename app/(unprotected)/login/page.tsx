@@ -7,7 +7,7 @@ const LoginPage = () => {
         <h1 className="my-1 text-2xl text-center font-bold">Sign in to your account</h1>
         <p className="text-center mb-6">Click either of any button</p>
         <div>
-          <OAuthButtonGroup  type="sign-in" />
+          <OAuthButtonGroup   type="sign-in" />
         </div>
       </div>
     </div>
