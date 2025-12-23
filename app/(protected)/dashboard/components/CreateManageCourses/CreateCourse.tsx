@@ -20,8 +20,9 @@ import { toast } from "sonner";
 
 const CreateCourse = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState<boolean>();
   const [courseName, setCourseName] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<any>();
   const [courseLang, setCourseLang] = useState<
     | {
         key: string;
@@ -33,23 +34,26 @@ const CreateCourse = () => {
     label: "",
   });
 
+
+  console.log(imageFile)
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setIsLoading(true);
     if (event.target.files && event.target.files[0]) {
       const image = event.target.files[0];
       // const baseImage = toBase64(image);
       const formData = new FormData();
       formData.append("image", image);
-      setImageFile(image);
       const data = await UploadImage(formData);
       if (data) {
         toast.success("Image uploaded!", {
           position: "top-center",
         });
       }
-      console.log(data);
+      setImageFile(data);
     }
+    setIsLoading(false);
   };
 
   const onSubmit = async () => {
@@ -108,7 +112,7 @@ const CreateCourse = () => {
                       <Image
                         className="  border-gray-300 border-1 w-[120px] h-[120px] "
                         alt=""
-                        src={URL.createObjectURL(imageFile)}
+                        src={imageFile.data.url}
                         width={500}
                         height={500}
                       />
@@ -117,9 +121,13 @@ const CreateCourse = () => {
                     <div className="">
                       <label
                         htmlFor="image"
-                        className=" h-[120px] w-[120px] flex justify-center items-center border  border-dashed text-gray-400 text-3xl rounded cursor-pointer  "
+                        className=" h-[120px] w-[120px] flex justify-center items-center border  border-dashed text-gray-400  rounded cursor-pointer  "
                       >
-                        +
+                        {isLoading ? (
+                          <p className="text-md">Uploading...</p>
+                        ) : (
+                          <p className="text-3xl">+</p>
+                        )}
                       </label>
                       <input
                         accept="image/*"
