@@ -1,5 +1,6 @@
 "use client";
 import { createCourse } from "@/actions/course.action";
+import { UploadImage } from "@/actions/upload-image.action";
 import { majorLanguages } from "@/constants/majorLanguages";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -12,12 +13,15 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const CreateCourse = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [courseName, setCourseName] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [courseLang, setCourseLang] = useState<
     | {
         key: string;
@@ -28,6 +32,25 @@ const CreateCourse = () => {
     key: "",
     label: "",
   });
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      const image = event.target.files[0];
+      // const baseImage = toBase64(image);
+      const formData = new FormData();
+      formData.append("image", image);
+      setImageFile(image);
+      const data = await UploadImage(formData);
+      if (data) {
+        toast.success("Image uploaded!", {
+          position: "top-center",
+        });
+      }
+      console.log(data);
+    }
+  };
 
   const onSubmit = async () => {
     if (courseName && courseLang) {
@@ -72,8 +95,42 @@ const CreateCourse = () => {
             <ModalHeader>Create a course</ModalHeader>
             <ModalBody>
               <>
-                <label htmlFor="image" className="text-5xl text-gray-400">+</label>
-                <Input id="image" type="image" className="hidden" />
+                <div className="my-8 flex items-center gap-4 mx-auto">
+                  {imageFile ? (
+                    <div className="relative  group  w-[120px] h-[120px]">
+                      <div className="absolute bg-red-900/45 inset-0  hidden cursor-pointer group-hover:flex z-20 items-center justify-center">
+                        <Trash2
+                          onClick={() => setImageFile(null)}
+                          className="text-white"
+                          size={24}
+                        />
+                      </div>
+                      <Image
+                        className="  border-gray-300 border-1 w-[120px] h-[120px] "
+                        alt=""
+                        src={URL.createObjectURL(imageFile)}
+                        width={500}
+                        height={500}
+                      />
+                    </div>
+                  ) : (
+                    <div className="">
+                      <label
+                        htmlFor="image"
+                        className=" h-[120px] w-[120px] flex justify-center items-center border  border-dashed text-gray-400 text-3xl rounded cursor-pointer  "
+                      >
+                        +
+                      </label>
+                      <input
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        id="image"
+                        type="file"
+                        className="hidden h-[120px] w-[120px]"
+                      />
+                    </div>
+                  )}
+                </div>
                 <Input
                   className="cursor-pointer"
                   placeholder="e.g English grammer"

@@ -17,7 +17,7 @@ export default async function Home() {
         <span className={title({ color: "violet" })}>learning&nbsp;</span>
         <br />
         <span className={title()}>
-          affective and customized.
+          effective and customized.
         </span>
         <div className={subtitle({ class: "mt-4" })}>
           Create, manage and learn on your pace.
