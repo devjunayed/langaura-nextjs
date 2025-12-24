@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { TDeleteImage } from "@/actions/image.action";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
@@ -24,5 +25,24 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
       .end(buffer);
   });
+  return NextResponse.json(result);
+}
+
+export async function DELETE(req: NextRequest, res: NextResponse) {
+  const url: TDeleteImage = (await req.json()) as unknown as TDeleteImage;
+  const result = await cloudinary.uploader.destroy(
+    url.public_id as string,
+    {
+      invalidate: true,
+    },
+    (error, result) => {
+      if (error) {
+        console.error("Deletion error:", error);
+      } else {
+        console.log("Deletion result:", result);
+        return NextResponse.json(result);
+      }
+    }
+  );
   return NextResponse.json(result);
 }

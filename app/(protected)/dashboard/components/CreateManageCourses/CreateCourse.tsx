@@ -1,6 +1,6 @@
 "use client";
 import { createCourse } from "@/actions/course.action";
-import { UploadImage } from "@/actions/upload-image.action";
+import { DeleteImage, UploadImage } from "@/actions/image.action";
 import { majorLanguages } from "@/constants/majorLanguages";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -34,8 +34,8 @@ const CreateCourse = () => {
     label: "",
   });
 
+  console.log(imageFile);
 
-  console.log(imageFile)
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -54,6 +54,21 @@ const CreateCourse = () => {
       setImageFile(data);
     }
     setIsLoading(false);
+  };
+
+  const removeImage = async () => {
+    const imageData = {
+      public_id: imageFile.data.public_id,
+      signature: imageFile.data.signature,
+    };
+
+    const response = await DeleteImage(imageData);
+    if (response.result === "ok") {
+      toast.success("Image removed", {
+        position: "top-center"
+      });
+      setImageFile(null);
+    }
   };
 
   const onSubmit = async () => {
@@ -104,7 +119,7 @@ const CreateCourse = () => {
                     <div className="relative  group  w-[120px] h-[120px]">
                       <div className="absolute bg-red-900/45 inset-0  hidden cursor-pointer group-hover:flex z-20 items-center justify-center">
                         <Trash2
-                          onClick={() => setImageFile(null)}
+                          onClick={() => removeImage()}
                           className="text-white"
                           size={24}
                         />
