@@ -1,16 +1,26 @@
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { stackServerApp } from "@/stack/server";
+import EnrolledCourses from "../admin/dashboard/components/EnrolledCourses/EnrolledCourses";
+import CompletedCourses from "../admin/dashboard/components/CompletedCourses/CompletedCourses";
 
-import EnrolledCourses from "./components/EnrolledCourses/EnrolledCourses";
-import CreateManageCourses from "./components/CreateManageCourses/CreateManageCourses";
-import CompletedCourses from "./components/CompletedCourses/CompletedCourses";
+const DashboardPage = async () => {
+  const session = await stackServerApp.getUser({ or: "redirect" });
 
-const CoursePage = () => {
-  return (
-    <div className="space-y-4 mt-6">
-      <EnrolledCourses />
-      <CreateManageCourses />
-      <CompletedCourses />
-    </div>
-  );
+  const user = await prisma.user.findUnique({
+    where: { stackId: session.id },
+  });
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  if (user.role === "admin") {
+    return redirect("/admin/dashboard");
+  }
+
+  // Regular users go to their courses page
+  return redirect("/user/my-courses");
 };
 
-export default CoursePage;
+export default DashboardPage;

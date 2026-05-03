@@ -22,6 +22,7 @@ const CreateCourse = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [courseName, setCourseName] = useState("");
+  const [coursePrice, setCoursePrice] = useState<number>(0);
   const [imageFile, setImageFile] = useState<any>();
   const [courseLang, setCourseLang] = useState<
     | {
@@ -37,7 +38,7 @@ const CreateCourse = () => {
   console.log(imageFile);
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setIsLoading(true);
     if (event.target.files && event.target.files[0]) {
@@ -65,7 +66,7 @@ const CreateCourse = () => {
     const response = await DeleteImage(imageData);
     if (response.result === "ok") {
       toast.success("Image removed", {
-        position: "top-center"
+        position: "top-center",
       });
       setImageFile(null);
     }
@@ -77,6 +78,8 @@ const CreateCourse = () => {
         name: courseName,
         key: courseLang?.key,
         label: courseLang?.label,
+        price: coursePrice,
+        image: imageFile?.data?.secure_url,
       });
 
       console.log({ res });
@@ -87,7 +90,7 @@ const CreateCourse = () => {
     <>
       <div
         onClick={onOpen}
-        className="bg-white cursor-pointer w-50 h-50 flex gap-2 p-2  rounded-md"
+        className="dark:bg-black bg-white cursor-pointer w-50 h-50 flex gap-2 p-2   rounded-4xl"
       >
         <div className=" w-full h-full shadow-md flex items-center justify-center border  border-dashed border-gray-300 text-gray-300 text-4xl">
           +
@@ -165,8 +168,8 @@ const CreateCourse = () => {
                   onChange={(event) => {
                     setCourseLang(
                       majorLanguages?.find(
-                        (lang) => lang.key === event.target.value
-                      )
+                        (lang) => lang.key === event.target.value,
+                      ),
                     );
                   }}
                   labelPlacement="outside"
@@ -177,7 +180,18 @@ const CreateCourse = () => {
                   {majorLanguages.map((lang) => (
                     <SelectItem key={lang.key}>{lang.label}</SelectItem>
                   ))}
-                </Select>
+                </Select>{" "}
+                <Input
+                  type="number"
+                  className="cursor-pointer"
+                  placeholder="0"
+                  labelPlacement="outside"
+                  label="Course price (USD)"
+                  value={coursePrice.toString()}
+                  onChange={(e) => setCoursePrice(Number(e.target.value) || 0)}
+                  min="0"
+                  step="0.01"
+                />{" "}
               </>
             </ModalBody>
             <ModalFooter>

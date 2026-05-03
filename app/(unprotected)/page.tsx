@@ -16,39 +16,36 @@ export default async function Home() {
         <span className={title()}>Make&nbsp;</span>
         <span className={title({ color: "violet" })}>learning&nbsp;</span>
         <br />
-        <span className={title()}>
-          effective and customized.
-        </span>
+        <span className={title()}>effective and customized.</span>
         <div className={subtitle({ class: "mt-4" })}>
           Create, manage and learn on your pace.
         </div>
       </div>
 
       <div className="flex gap-3">
-        {
-          session ?
-        <Link
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={"/dashboard"}
-        >
-          Dashboard
-        </Link>
-        :
-        <Link
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href="/login"
-        >
-          Login
-        </Link>
-        }
+        {session ? (
+          <Link
+            className={buttonStyles({
+              color: "primary",
+              radius: "full",
+              variant: "shadow",
+            })}
+            href={"/user/my-courses"}
+          >
+            My Courses
+          </Link>
+        ) : (
+          <Link
+            className={buttonStyles({
+              color: "primary",
+              radius: "full",
+              variant: "shadow",
+            })}
+            href="/login"
+          >
+            Login
+          </Link>
+        )}
         <Link
           isExternal
           className={buttonStyles({ variant: "bordered", radius: "full" })}
@@ -58,8 +55,6 @@ export default async function Home() {
           GitHub
         </Link>
       </div>
-
-      
     </section>
   );
 }

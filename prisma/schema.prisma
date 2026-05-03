@@ -13,15 +13,21 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id      String @id @default(uuid())
-  stackId String @unique
-  name    String
+enum Role {
+  admin
+  user
+}
 
-  email     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  courses   Course[]
+model User {
+  id          String       @id @default(uuid())
+  stackId     String       @unique
+  name        String
+  role        Role         @default(user)
+  email       String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  courses     Course[]
+  enrollments Enrollment[]
 }
 
 model Course {
@@ -29,9 +35,59 @@ model Course {
   name      String
   key       String
   label     String
+  price     Float    @default(0)
+  image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author   User   @relation(fields: [authorId], references: [stackId])
-  authorId String
+  author      User         @relation(fields: [authorId], references: [stackId])
+  authorId    String
+  enrollments Enrollment[]
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course         Course           @relation(fields: [courseId], references: [id])
+  courseId       String
+  lessonProgress LessonProgress[]
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  progress   Float    @default(0)
+  enrolledAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [stackId])
+  userId String
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  lessonProgress LessonProgress[]
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id          String    @id @default(uuid())
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId String
+
+  @@unique([enrollmentId, lessonId])
 }
