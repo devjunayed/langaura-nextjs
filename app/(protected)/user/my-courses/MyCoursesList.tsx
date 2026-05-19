@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Progress } from "@heroui/progress";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Enrollment = {
   id: string;
@@ -23,7 +23,7 @@ type Enrollment = {
 };
 
 const MyCoursesList = ({ enrollments }: { enrollments: Enrollment[] }) => {
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const router = useRouter();
 
   if (enrollments.length === 0) {
     return (
@@ -137,7 +137,9 @@ const MyCoursesList = ({ enrollments }: { enrollments: Enrollment[] }) => {
                     size="sm"
                     color="primary"
                     variant="solid"
-                    onPress={() => setSelectedCourse(enrollment.course.id)}
+                    onPress={() =>
+                      router.push(`/user/courses/${enrollment.course.id}/learn`)
+                    }
                   >
                     {enrollment.progress === 0 ? "Start Learning" : "Continue"}
                   </Button>
@@ -145,7 +147,9 @@ const MyCoursesList = ({ enrollments }: { enrollments: Enrollment[] }) => {
                     <Button
                       size="sm"
                       variant="light"
-                      onPress={() => setSelectedCourse(enrollment.course.id)}
+                      onPress={() =>
+                        router.push(`/user/courses/${enrollment.course.id}`)
+                      }
                     >
                       Review
                     </Button>

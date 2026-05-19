@@ -17,7 +17,7 @@ const CoursesPage = async () => {
   });
 
   // Get user's enrollments if logged in
-  let userEnrollments = [];
+  let userEnrollments: { courseId: string; progress: number }[] = [];
   if (session) {
     userEnrollments = await prisma.enrollment.findMany({
       where: { userId: session.id },

@@ -56,7 +56,70 @@ model Lesson {
 
   course         Course           @relation(fields: [courseId], references: [id])
   courseId       String
+  subLessons     SubLesson[]
+  exams          Exam[]
   lessonProgress LessonProgress[]
+
+  @@index([courseId, order])
+}
+
+model SubLesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lesson            Lesson              @relation(fields: [lessonId], references: [id])
+  lessonId          String
+  exams             Exam[]
+  subLessonProgress SubLessonProgress[]
+
+  @@index([lessonId, order])
+}
+
+model Exam {
+  id                 String   @id @default(uuid())
+  title              String
+  description        String?
+  questionLimit      Int      @default(20)
+  randomizeQuestions Boolean  @default(true)
+  randomizeOptions   Boolean  @default(true)
+  isPublished        Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  lesson      Lesson?        @relation(fields: [lessonId], references: [id])
+  lessonId    String?
+  subLesson   SubLesson?     @relation(fields: [subLessonId], references: [id])
+  subLessonId String?
+  questions   ExamQuestion[]
+  attempts    ExamAttempt[]
+
+  @@index([lessonId, isPublished])
+  @@index([subLessonId, isPublished])
+}
+
+model ExamQuestion {
+  id          String   @id @default(uuid())
+  type        String
+  prompt      String
+  payload     Json?
+  answer      Json?
+  explanation String?
+  points      Float    @default(1)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  exam    Exam         @relation(fields: [examId], references: [id])
+  examId  String
+  answers ExamAnswer[]
+
+  @@index([examId, isActive])
+  @@index([examId, order])
 }
 
 model Enrollment {
@@ -71,9 +134,13 @@ model Enrollment {
   course   Course @relation(fields: [courseId], references: [id])
   courseId String
 
-  lessonProgress LessonProgress[]
+  lessonProgress    LessonProgress[]
+  subLessonProgress SubLessonProgress[]
+  examAttempts      ExamAttempt[]
 
   @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([userId])
 }
 
 model LessonProgress {
@@ -90,4 +157,63 @@ model LessonProgress {
   lessonId String
 
   @@unique([enrollmentId, lessonId])
+  @@index([enrollmentId, completed])
+  @@index([lessonId, completed])
+}
+
+model SubLessonProgress {
+  id          String    @id @default(uuid())
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String
+
+  subLesson   SubLesson @relation(fields: [subLessonId], references: [id])
+  subLessonId String
+
+  @@unique([enrollmentId, subLessonId])
+  @@index([enrollmentId, completed])
+  @@index([subLessonId, completed])
+}
+
+model ExamAttempt {
+  id                  String    @id @default(uuid())
+  score               Float?
+  totalPoints         Float?
+  submittedAt         DateTime?
+  selectedQuestionIds Json
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String
+
+  exam   Exam   @relation(fields: [examId], references: [id])
+  examId String
+
+  answers ExamAnswer[]
+
+  @@index([enrollmentId, examId])
+  @@index([examId, submittedAt])
+}
+
+model ExamAnswer {
+  id        String   @id @default(uuid())
+  response  Json
+  isCorrect Boolean?
+  points    Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id])
+  attemptId String
+
+  question   ExamQuestion @relation(fields: [questionId], references: [id])
+  questionId String
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
 }

@@ -6,6 +6,7 @@ import { Button } from "@heroui/button";
 import { enrollInCourse } from "@/actions/enrollment.action";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Course = {
   id: string;
@@ -13,13 +14,17 @@ type Course = {
   key: string;
   label: string;
   price: number;
-  image?: string;
+  image: string | null;
   author: { name: string } | null;
   createdAt: string;
   isEnrolled: boolean;
 };
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : "Failed to enroll in course";
+
 const CourseBrowser = ({ courses }: { courses: Course[] }) => {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [languageFilter, setLanguageFilter] = useState("");
   const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(
@@ -33,8 +38,8 @@ const CourseBrowser = ({ courses }: { courses: Course[] }) => {
       toast.success("Successfully enrolled in the course!");
       // Refresh the page to update enrollment status
       window.location.reload();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to enroll in course");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setEnrollingCourseId(null);
     }
@@ -61,6 +66,10 @@ const CourseBrowser = ({ courses }: { courses: Course[] }) => {
       }),
     [courses, query, languageFilter],
   );
+
+  const openCourseDetails = (courseId: string) => {
+    router.push(`/user/courses/${courseId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -128,7 +137,16 @@ const CourseBrowser = ({ courses }: { courses: Course[] }) => {
             {filteredCourses.map((course) => (
               <article
                 key={course.id}
-                className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
+                role="button"
+                tabIndex={0}
+                onClick={() => openCourseDetails(course.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openCourseDetails(course.id);
+                  }
+                }}
+                className="cursor-pointer rounded-4xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-slate-700 dark:bg-slate-900"
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -171,16 +189,21 @@ const CourseBrowser = ({ courses }: { courses: Course[] }) => {
                       Enrolled
                     </span>
                   ) : (
-                    <Button
-                      size="sm"
-                      color="primary"
-                      variant="solid"
-                      onPress={() => handleEnroll(course.id)}
-                      isLoading={enrollingCourseId === course.id}
-                      disabled={enrollingCourseId === course.id}
+                    <div
+                      onClick={(event) => event.stopPropagation()}
+                      onKeyDown={(event) => event.stopPropagation()}
                     >
-                      {course.price === 0 ? "Enroll Free" : "Enroll"}
-                    </Button>
+                      <Button
+                        size="sm"
+                        color="primary"
+                        variant="solid"
+                        onPress={() => handleEnroll(course.id)}
+                        isLoading={enrollingCourseId === course.id}
+                        disabled={enrollingCourseId === course.id}
+                      >
+                        {course.price === 0 ? "Enroll Free" : "Enroll"}
+                      </Button>
+                    </div>
                   )}
                 </div>
                 <div className="mt-4 text-sm text-slate-500 dark:text-slate-400">
